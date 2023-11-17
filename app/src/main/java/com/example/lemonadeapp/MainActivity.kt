@@ -58,6 +58,14 @@ fun DisplayImageWithText(modifier: Modifier = Modifier) {
         mutableStateOf(1)
     }
 
+    var squeezeTimes by remember {
+        mutableStateOf(0)
+    }
+
+    var squeezeCount by remember {
+        mutableStateOf(0)
+    }
+
     val imageResource = when (step) {
         1 -> R.drawable.lemon_tree
         2 -> R.drawable.lemon_squeeze
@@ -96,7 +104,21 @@ fun DisplayImageWithText(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(180.dp))
         Button(
             onClick = {
-                step = if (step == 4) 1 else step+1
+                if (step == 2 && squeezeTimes == 0) {
+                    squeezeTimes = (2..4).random()
+                    squeezeCount = 1
+                }
+                if (step == 2 && (squeezeTimes in 2..4 && squeezeCount != squeezeTimes)) {
+                    squeezeCount += 1
+                } else {
+                    if (step == 4) {
+                        squeezeTimes = 0
+                        squeezeCount = 0
+                        step = 1
+                    } else {
+                        step += 1
+                    }
+                }
             },
             shape = RoundedCornerShape(50.dp),
             contentPadding = PaddingValues(
