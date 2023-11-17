@@ -19,6 +19,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,22 +53,51 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun DisplayImageWithText(modifier: Modifier = Modifier) {
-    Text(
-        text = "Lemonade",
-        fontWeight = FontWeight.Bold,
-        fontSize = 30.sp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(70.dp)
-            .background(Color(249, 228, 76))
-            .wrapContentSize(Alignment.Center)
-    )
+
+    var step by remember {
+        mutableStateOf(1)
+    }
+
+    val imageResource = when (step) {
+        1 -> R.drawable.lemon_tree
+        2 -> R.drawable.lemon_squeeze
+        3 -> R.drawable.lemon_drink
+        else -> R.drawable.lemon_restart
+    }
+
+    val contentDescription = when (step) {
+        1 -> R.string.lemon_tree_content_description
+        2 -> R.string.lemon_content_description
+        3 -> R.string.lemon_glass_content_description
+        else -> R.string.empty_glass_content_description
+    }
+
+    val instructionResource = when (step) {
+        1 -> R.string.step_one_text
+        2 -> R.string.step_two_text
+        3 -> R.string.step_three_text
+        else -> R.string.step_four_text
+    }
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = "Lemonade",
+            fontWeight = FontWeight.Bold,
+            fontSize = 30.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp)
+                .background(Color(249, 228, 76))
+                .wrapContentSize(Alignment.Center)
+        )
+        Spacer(modifier = Modifier.height(180.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                step = if (step == 4) 1 else step+1
+            },
             shape = RoundedCornerShape(50.dp),
             contentPadding = PaddingValues(
                 top = 40.dp,
@@ -74,33 +107,32 @@ fun DisplayImageWithText(modifier: Modifier = Modifier) {
             ),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(195,236,210)
-            ),
+            )
         ) {
             Image(
                 painter = painterResource(
-                    id = R.drawable.lemon_tree
+                    id = imageResource
                 ),
                 contentDescription = stringResource(
-                    id = R.string.lemon_tree_content_description
+                    id = contentDescription
                 )
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = stringResource(id = R.string.step_one_text),
+            text = stringResource(id = instructionResource),
             fontSize = 18.sp
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LemonadeApp() {
     LemonadeAppTheme {
         DisplayImageWithText(
             modifier = Modifier
                 .fillMaxSize()
-                .wrapContentSize(Alignment.Center)
         )
     }
 }
